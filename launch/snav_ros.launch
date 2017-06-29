@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<!--
+/****************************************************************************
+ *   Copyright (c) 2017 Michael Shomin. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ * 3. Neither the name ATLFlight nor the names of its contributors may be
+ *    used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * In addition Supplemental Terms apply.  See the SUPPLEMENTAL file. 
+ ****************************************************************************/
+-->
+<launch>
+  <node pkg="snav_ros" name="snav_interface_node" type="snav_interface_node" output="screen">
+
+    <param name="loop_frequency" value="100.0"/>
+    <param name="low_freq_data_rate" value="5.0"/>
+
+    <param name="base_link_frame" value="/base_link"/>
+
+
+    <!-- These are default values.  Uncomment if you you need to change them.-->
+    <!--
+    <param name="vio_frame" value="/vio/odom"/>
+    <param name="vio_desired_frame" value="/vio/base_link_desired"/>
+
+    <param name="optic_flow_frame" value="/optic_flow/odom"/>
+    <param name="optic_flow_desired_frame" value="/opitc_flow/base_link_desired"/>
+
+    <param name="gps_frame" value="/gps/odom"/>
+    <param name="gps_desired_frame" value="/gps/base_link_desired"/>
+    -->
+
+    <!-- This configuration sets /vio/odom as the parent link to base link-->
+    <!-- It also publishes gps frame data alongside VIO. -->
+    <param name="publish_vio_data" value="true"/>
+    <param name="publish_optic_flow_data" value="false"/>
+    <param name="publish_gps_data" value="true"/>
+
+    <param name="broadcast_tf" value="true"/>
+    <param name="broadcast_des_tf" value="true"/>
+    <param name="publish_pose" value="true"/>
+    <param name="publish_des_pose" value="false"/>
+
+    <!-- This param specifies which frame will be the parent of base_link -->
+    <!-- Choose VIO, OF, or GPS -->
+    <param name="root_tf_frame" value="VIO"/>
+
+
+    <!-- cmd_vel_type specifies which RC_CMD_MODE type will 
+         be used to supply snav with a desired velocity -->
+    <param name="cmd_vel_type" value="1"/> <!-- VIO -->
+    <!--param name="cmd_vel_type" value="2"/--> <!-- OF -->
+    <!--param name="cmd_vel_type" value="3"/--> <!-- GPS -->
+  </node>
+</launch>
+
+
