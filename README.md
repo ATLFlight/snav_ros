@@ -14,6 +14,19 @@ This example assumes that you have a flyable Snapdragon-based drone (with
 RC/WiFi controller, ESC's, propellers, and Snapdragon Flight board) and are
 comfortable flying a drone.
 
+## Version Compatibility
+
+The SNAV parameters in this repository are intended for particular versions of SNAV.
+
+This README is for snav_ros version 1.1.0, compatible with SNAV 1.2.38.1.
+For previous versions, please see the table below
+
+| SNAV <br>Version        | snav_vehicles <br>Version  |
+| ------------- | -----:|
+| 1.2.31        | [1.0.0](https://github.com/ATLFlight/snav_ros/tree/v1.0.0) |
+| 1.2.38.1      | [1.1.0](https://github.com/ATLFlight/snav_ros/tree/1.1.0) |
+
+Note that you must also recompile snav_ros when installing a new version of SNAV.
 
 ## Table of Contents
 
@@ -78,7 +91,7 @@ cd ../src
 git clone https://github.com/ATLFlight/snav_ros.git
 ```
 
-### Instal ROS dependencies
+### Install ROS dependencies
 
 This package depends on other ROS packages to run.  To install them, we'll use [rosdep](http://wiki.ros.org/rosdep)
 

@@ -35,79 +35,72 @@
 
 int main(int argc, char *argv[])
 {
-    ros::init(argc, argv, "snav_interface");
-    ros::NodeHandle nh;
-    ros::NodeHandle private_nh("~");
+  ros::init(argc, argv, "snav_interface");
+  ros::NodeHandle nh;
+  ros::NodeHandle private_nh("~");
 
-    double loop_freq, slow_loop_freq;
-    private_nh.param("loop_frequency", loop_freq, 100.0);
-    private_nh.param("low_freq_data_rate", slow_loop_freq, 5.0);
+  double loop_freq, slow_loop_freq;
+  private_nh.param("loop_frequency", loop_freq, 100.0);
+  private_nh.param("low_freq_data_rate", slow_loop_freq, 5.0);
 
-    bool publish_vio_data, publish_optic_flow_data, publish_gps_data;
-    private_nh.param("publish_vio_data", publish_vio_data, true);
-    private_nh.param("publish_optic_flow_data", publish_optic_flow_data, false);
-    private_nh.param("publish_gps_data", publish_gps_data, false);
+  bool publish_est_data;
+  private_nh.param("publish_est_data", publish_est_data, true);
+  bool publish_sim_data;
+  private_nh.param("publish_sim_data", publish_sim_data, true);
 
-    bool broadcast_tf, publish_pose;
-    bool broadcast_des_tf, publish_des_pose;
-    private_nh.param("broadcast_tf", broadcast_tf, true);
-    private_nh.param("broadcast_des_tf", broadcast_des_tf, true);
-    private_nh.param("publish_pose", publish_pose, true);
-    private_nh.param("publish_des_pose", publish_des_pose, true);
+  bool broadcast_tf, publish_pose;
+  bool broadcast_des_tf, publish_des_pose;
+  bool broadcast_gps_tf;
+  bool broadcast_sim_gt_tf, publish_sim_gt_pose;
+  private_nh.param("broadcast_tf", broadcast_tf, true);
+  private_nh.param("broadcast_des_tf", broadcast_des_tf, true);
+  private_nh.param("broadcast_gps_tf", broadcast_gps_tf, true);
+  private_nh.param("broadcast_sim_gt_tf", broadcast_sim_gt_tf, true);
+  private_nh.param("publish_pose", publish_pose, true);
+  private_nh.param("publish_des_pose", publish_des_pose, true);
+  private_nh.param("publish_sim_gt_pose", publish_sim_gt_pose, true);
 
+  SnavInterface sn_iface(nh, private_nh);
+  
+  ros::Timer timer = nh.createTimer(ros::Duration(1.0/slow_loop_freq),
+                                    &SnavInterface::PublishLowFrequencyData, &sn_iface);
+  ros::WallRate loop_ctrl(loop_freq);
 
-    SnavInterface sn_iface(nh, private_nh);
+  while(ros::ok())
+  {
+    ros::spinOnce();
 
-    ros::Timer timer = nh.createTimer(ros::Duration(1.0/slow_loop_freq), 
-				      &SnavInterface::PublishLowFrequencyData, &sn_iface);
-    ros::Rate loop_ctrl(loop_freq);    
+    sn_iface.UpdateSnavData();
+    sn_iface.UpdatePoseMessages();
 
-    while(ros::ok())
+    if (publish_est_data)
     {
-      ros::spinOnce();
-
-      sn_iface.UpdateSnavData();
-      sn_iface.UpdatePoseMessages();
-
-
-      // -- VIO Data Publishing --
-      if( publish_vio_data ){
-	if(broadcast_des_tf)
-	  sn_iface.BroadcastDesiredVIOTf();
-	if(publish_des_pose)
-	  sn_iface.PublishDesiredVIOPose();
-	if(broadcast_tf)
-	  sn_iface.BroadcastVIOTf();
-	if(publish_pose)
-	  sn_iface.PublishVIOPose();
+      if (broadcast_des_tf)
+        sn_iface.BroadcastDesiredTf();
+      if (publish_des_pose)
+        sn_iface.PublishDesiredPose();
+      if (broadcast_tf)
+      {
+        sn_iface.BroadcastEstTf();
+        sn_iface.BroadcastBaseLinkNoRotTf();
+        sn_iface.BroadcastBaseLinkStabTf();
       }
-
-      // -- Optic Flow Data Publishing --
-      if( publish_optic_flow_data ){
-	if(broadcast_des_tf)
-	  sn_iface.BroadcastDesiredOFTf();
-	if(publish_des_pose)
-	  sn_iface.PublishDesiredOFPose();
-	if(broadcast_tf)
-	  sn_iface.BroadcastOFTf();
-	if(publish_pose)
-	  sn_iface.PublishOFPose();
-      }
-
-      // -- GPS Data Publishing --
-      if( publish_gps_data ){
-	if(broadcast_des_tf)
-	  sn_iface.BroadcastDesiredGPSTf();
-	if(publish_des_pose)
-	  sn_iface.PublishDesiredGPSPose();
-	if(broadcast_tf)
-	  sn_iface.BroadcastGPSTf();
-	if(publish_pose)
-	  sn_iface.PublishGPSPose();
-      }
-
-      loop_ctrl.sleep();
+      if (publish_pose)
+        sn_iface.PublishEstPose();
+      if (broadcast_gps_tf)
+        sn_iface.BroadcastGpsEnuTf();
     }
 
-    return 0;
+    if (publish_sim_data)
+    {
+      if (broadcast_sim_gt_tf)
+        sn_iface.BroadcastSimGtTf();
+      if (publish_sim_gt_pose)
+        sn_iface.PublishSimGtPose();
+    }
+
+    loop_ctrl.sleep();
+  }
+
+  return 0;
 }

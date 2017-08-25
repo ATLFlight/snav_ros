@@ -39,6 +39,7 @@ find_package(catkin REQUIRED
   cmake_modules
   geometry_msgs
   std_msgs
+  rosgraph_msgs
   roscpp
   tf2
   tf2_ros
@@ -50,7 +51,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS geometry_msgs roscpp tf2 tf2_ros tf2_geometry_msgs
+  CATKIN_DEPENDS geometry_msgs rosgraph_msgs roscpp tf2 tf2_ros tf2_geometry_msgs
   DEPENDS system_lib
 )
 

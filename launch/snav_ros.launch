@@ -36,46 +36,15 @@
 -->
 <launch>
   <node pkg="snav_ros" name="snav_interface_node" type="snav_interface_node" output="screen">
-
     <param name="loop_frequency" value="100.0"/>
     <param name="low_freq_data_rate" value="5.0"/>
 
     <param name="base_link_frame" value="/base_link"/>
 
-
-    <!-- These are default values.  Uncomment if you you need to change them.-->
-    <!--
-    <param name="vio_frame" value="/vio/odom"/>
-    <param name="vio_desired_frame" value="/vio/base_link_desired"/>
-
-    <param name="optic_flow_frame" value="/optic_flow/odom"/>
-    <param name="optic_flow_desired_frame" value="/opitc_flow/base_link_desired"/>
-
-    <param name="gps_frame" value="/gps/odom"/>
-    <param name="gps_desired_frame" value="/gps/base_link_desired"/>
-    -->
-
-    <!-- This configuration sets /vio/odom as the parent link to base link-->
-    <!-- It also publishes gps frame data alongside VIO. -->
-    <param name="publish_vio_data" value="true"/>
-    <param name="publish_optic_flow_data" value="false"/>
-    <param name="publish_gps_data" value="true"/>
-
     <param name="broadcast_tf" value="true"/>
     <param name="broadcast_des_tf" value="true"/>
     <param name="publish_pose" value="true"/>
     <param name="publish_des_pose" value="false"/>
-
-    <!-- This param specifies which frame will be the parent of base_link -->
-    <!-- Choose VIO, OF, or GPS -->
-    <param name="root_tf_frame" value="VIO"/>
-
-
-    <!-- cmd_vel_type specifies which RC_CMD_MODE type will 
-         be used to supply snav with a desired velocity -->
-    <param name="cmd_vel_type" value="1"/> <!-- VIO -->
-    <!--param name="cmd_vel_type" value="2"/--> <!-- OF -->
-    <!--param name="cmd_vel_type" value="3"/--> <!-- GPS -->
   </node>
 </launch>
 

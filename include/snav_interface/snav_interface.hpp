@@ -45,12 +45,13 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/Bool.h>
+#include <rosgraph_msgs/Clock.h>
 #include <std_msgs/Empty.h>
 
 #include <snav/snapdragon_navigator.h>
 
 class SnavInterface
-{ 
+{
 public:
   /**
    * Constructor.
@@ -63,79 +64,63 @@ public:
 
   /**
    * Pack VIO, Optic Flow, and GPS data into ros messages and tfs
-   **/  
+   **/
   void UpdatePoseMessages();
 
   /**
    * Update snav cached_data from snav RPC call
-   **/  
+   **/
   void UpdateSnavData();
 
   /**
-   * Publish vio_frame_ -> base_link_frame_ transform
-   **/  
-  void BroadcastVIOTf();
+   * Publish estimation_frame_ -> base_link_frame_ transform
+   */
+  void BroadcastEstTf();
 
   /**
-   * Publish vio_frame_ -> vio_base_link_des_frame_ transform
-   **/  
-  void BroadcastDesiredVIOTf();
+   * Publish base_link_frame_ -> base_link_no_rot_frame_ transform
+   */
+  void BroadcastBaseLinkNoRotTf();
 
   /**
-   * Publish base_link pose in vio_frame as geometry_msgs/Posestamped
-   **/  
-  void PublishVIOPose();
+   * Publish base_link_no_rot_frame_ -> base_link_stab_frame_ transform
+   */
+  void BroadcastBaseLinkStabTf();
 
   /**
-   * Publish base_link_des pose in vio_frame as geometry_msgs/Posestamped
-   **/  
-  void PublishDesiredVIOPose();
+   * Publish estimation_frame_ -> desired_frame_ transform
+   */
+  void BroadcastDesiredTf();
 
   /**
-   * Publish optic_flow_frame_ -> base_link_frame_ transform
-   **/  
-  void BroadcastOFTf();
+   * Publish estimation_frame_ -> gps_enu_frame_ transform
+   */
+  void BroadcastGpsEnuTf();
 
   /**
-   * Publish optic_flow_frame_ -> of_base_link_des_frame_ transform
-   **/  
-  void BroadcastDesiredOFTf();
+   * Publish base_link_frame_ -> sim_gt_frame_ transform
+   */
+  void BroadcastSimGtTf();
 
   /**
-   * Publish base_link pose in optic_flow_frame as geometry_msgs/Posestamped
-   **/  
-  void PublishOFPose();
+   * Publish base_link pose in estimation_frame_ as geometry_msgs/PoseStamped
+   */
+  void PublishEstPose();
 
   /**
-   * Publish base_link_des pose in optic_flow_frame as geometry_msgs/Posestamped
-   **/  
-  void PublishDesiredOFPose();
-
-
-  /**
-   * Publish gps_frame_ -> base_link_frame_ transform
-   **/  
-  void BroadcastGPSTf();
+   * Publish desired pose in estimation_frame_ as geometry_msgs/PoseStamped
+   */
+  void PublishDesiredPose();
 
   /**
-   * Publish gps_frame_ -> gps_base_link_des_frame_ transform
-   **/  
-  void BroadcastDesiredGPSTf();
-
-  /**
-   * Publish base_link pose in gps_frame as geometry_msgs/Posestamped
-   **/  
-  void PublishGPSPose();
-
-  /**
-   * Publish base_link_des pose in gps_frame as geometry_msgs/Posestamped
-   **/  
-  void PublishDesiredGPSPose();
+   * Publish base_link pose in sim_gt_frame_ as geometry_msgs/PoseStamped
+   */
+  void PublishSimGtPose();
 
   /**
    * Publish battery voltage and on_groung flag as Float32 and Bool msgs
    * @param event
-   *   Required argument for a function passed to a ros timer, This function 
+   *   Required argument for a function passed to a ros timer, This function
    *   is intended to be attached via nodehandle::createtimer
    */
   void PublishLowFrequencyData(const ros::TimerEvent& event);
@@ -143,8 +128,8 @@ public:
   /**
    * Callback function for velocity input
    * @param msg
-   *   geometry_msgs/Twist ros message.  linear x, y, z and angular z 
-   *   are used. Note if this callback is active, it also maps and sends commdands to 
+   *   geometry_msgs/Twist ros message.  linear x, y, z and angular z
+   *   are used. Note if this callback is active, it also maps and sends commdands to
    *   snav via RPC call
    */
   void CmdVelCallback(const geometry_msgs::Twist::ConstPtr& msg);
@@ -165,9 +150,8 @@ public:
 
 private:
   void GetRotationQuaternion(tf2::Quaternion &q);
-  void UpdateVIOMessages(tf2::Quaternion q);
-  void UpdateOFMessages(tf2::Quaternion q);
-  void UpdateGPSMessages(tf2::Quaternion q);
+  void UpdatePosVelMessages(tf2::Quaternion q);
+  void UpdateSimMessages();
 
   void PublishBatteryVoltage();
   void PublishOnGroundFlag();
@@ -175,10 +159,15 @@ private:
   void SendVelocityCommand();
   void GetDSPTimeOffset();
 
+  void SetRcCommandType(std::string rc_cmd_type_string);
+  void SetRcMappingType(std::string rc_cmd_mapping_string);
+  
   ros::Publisher battery_voltage_publisher_;
   ros::Publisher pose_est_publisher_;
   ros::Publisher pose_des_publisher_;
+  ros::Publisher pose_sim_gt_publisher_;
   ros::Publisher on_ground_publisher_;
+  ros::Publisher clock_publisher_;
 
   ros::Subscriber cmd_vel_subscriber_;
   ros::Subscriber start_props_subscriber_;
@@ -187,30 +176,26 @@ private:
   //public namespace nodehandle
   ros::NodeHandle nh_;
   //private namespace nodehandle
-  ros::NodeHandle pnh_; 
+  ros::NodeHandle pnh_;
 
   tf2_ros::TransformBroadcaster tf_pub_;
 
-  geometry_msgs::PoseStamped vio_pose_;
-  geometry_msgs::PoseStamped vio_desired_pose_;
-  geometry_msgs::TransformStamped vio_transform_;
-  geometry_msgs::TransformStamped vio_desired_transform_;
-
-  geometry_msgs::PoseStamped of_pose_;
-  geometry_msgs::PoseStamped of_desired_pose_;
-  geometry_msgs::TransformStamped of_transform_;
-  geometry_msgs::TransformStamped of_desired_transform_;
-
-  geometry_msgs::PoseStamped gps_pose_;
-  geometry_msgs::PoseStamped gps_desired_pose_;
-  geometry_msgs::TransformStamped gps_transform_;
-  geometry_msgs::TransformStamped gps_desired_transform_;
+  geometry_msgs::PoseStamped est_pose_msg_;
+  geometry_msgs::PoseStamped des_pose_msg_;
+  geometry_msgs::PoseStamped sim_gt_pose_msg_;
+  geometry_msgs::TransformStamped est_transform_msg_;
+  geometry_msgs::TransformStamped des_transform_msg_;
+  geometry_msgs::TransformStamped gps_enu_transform_msg_;
+  geometry_msgs::TransformStamped sim_gt_transform_msg_;
+  geometry_msgs::TransformStamped base_link_stab_transform_msg_;
+  geometry_msgs::TransformStamped base_link_no_rot_transform_msg_;
 
   geometry_msgs::Twist commanded_vel_;
 
   SnavCachedData *cached_data_;
 
   bool valid_rotation_est_;
+  bool valid_rotation_sim_gt_;
 
   ros::Time last_sn_update_;
   ros::Time last_vel_command_time_;
@@ -218,20 +203,18 @@ private:
   int64_t dsp_offset_in_ns_;
 
   // Params
-  std::string vio_frame_;
-  std::string gps_frame_;
-  std::string optic_flow_frame_;
-
+  std::string gps_enu_frame_;
+  std::string estimation_frame_;
   std::string base_link_frame_;
-  std::string vio_base_link_des_frame_;
-  std::string gps_base_link_des_frame_;
-  std::string of_base_link_des_frame_;
+  std::string base_link_stab_frame_;
+  std::string base_link_no_rot_frame_;
+  std::string desired_frame_;
+  std::string sim_gt_frame_;
 
-  int cmd_vel_type_;
+  SnRcCommandType rc_cmd_type_;
+  SnRcCommandOptions rc_cmd_mapping_;
 
-  bool vio_is_root_tf_;
-  bool of_is_root_tf_;
-  bool gps_is_root_tf_;
+  bool simulation_;
 };
 
 #endif
