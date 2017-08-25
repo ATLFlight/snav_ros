@@ -24,7 +24,7 @@ For previous versions, please see the table below
 | SNAV <br>Version        | snav_vehicles <br>Version  |
 | ------------- | -----:|
 | 1.2.31        | [1.0.0](https://github.com/ATLFlight/snav_ros/tree/v1.0.0) |
-| 1.2.38.1      | [1.1.0](https://github.com/ATLFlight/snav_ros/tree/1.1.0) |
+| 1.2.38.1      | [1.1.1](https://github.com/ATLFlight/snav_ros/tree/1.1.1) |
 
 Note that you must also recompile snav_ros when installing a new version of SNAV.
 
@@ -50,7 +50,9 @@ This example requires the following hardware:
 
 * [Qualcomm Snapdragon Flight Kit](https://shop.intrinsyc.com/collections/product-development-kits/products/qualcomm-snapdragon-flight-sbc)
 * [Qualcomm Electronic Speed Control (ESC) board](https://shop.intrinsyc.com/collections/dragonboard-accessories/products/qualcomm-electronic-speed-control-board)
-* Drone frame + Props - Coming Soon
+* Drone Frame, Motors, and Props; such as the [Dragon Drone Development Kit](https://worldsway.com/product/dragon-drone-development-kit/)
+
+Note that if you're using the Dragon DDK, a URDF ros package is available at: [dragon_ddk_description](https://github.com/ATLFlight/dragon_ddk_description)
 
 ### Software
 To run the example, the following are needed:
