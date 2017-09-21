@@ -59,8 +59,8 @@ To run the example, the following are needed:
 
 * [Plaform Image from Intrynsic 3.1.3.1](https://support.intrinsyc.com/attachments/download/1597/Flight_3.1.3.1_JFlash.zip)
 * [Platform Addon from Intrynsic 3.1.3.1](https://support.intrinsyc.com/attachments/download/1571/Flight_3.1.3.1_qcom_flight_controller_hexagon_sdk_add_on.zip)
-* [Qualcomm Snapdragon Navigator Flight Controller SDK 1.2.31](https://developer.qualcomm.com/download/snapdragon-flight/navigator-controller-v1.2.31)
-* [Qualcomm Machine Vision SDK 0.9.1](https://developer.qualcomm.com/download/snapdragon-flight/machine-vision-sdk-v091.deb)
+* [Qualcomm Snapdragon Navigator Flight Controller SDK 1.2.38.1](https://developer.qualcomm.com/download/snapdragon-flight/navigator-v1.2.38.deb)
+* [Qualcomm Machine Vision SDK 1.0.2](https://developer.qualcomm.com/download/machine-vision/machine-vision-sdk-v1.0.2.deb)
 * [ROS on target](https://github.com/ATLFlight/ATLFlightDocs/blob/master/SnapdragonROSInstallation.md)
 * [Qualcomm Snapdragon ESC Firmware 1.2.0](https://developer.qualcomm.com/download/snapdragon-flight/navigator-controller-esc-firmware-v1.2.0)
 
