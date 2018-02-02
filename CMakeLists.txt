@@ -94,7 +94,7 @@ COMMAND sudo chown root ${CATKIN_DEVEL_PREFIX}/lib/snav_ros/snav_interface_node
 COMMAND sudo chmod +s ${CATKIN_DEVEL_PREFIX}/lib/snav_ros/snav_interface_node
 )
 
-install(TARGETS snav_interface_node
+install(TARGETS snav_interface_node snav_interface
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
