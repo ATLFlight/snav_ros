@@ -46,6 +46,15 @@ find_package(catkin REQUIRED
   tf2_geometry_msgs
 )
 
+if ("${QC_SOC_TARGET}" STREQUAL "APQ8096")
+  add_definitions( -DQC_SOC_TARGET_APQ8096 )
+  message("Building for APQ8096")
+else()
+  add_definitions( -DQC_SOC_TARGET_APQ8074 )
+  message("Building for APQ8074")
+endif()
+
+
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 

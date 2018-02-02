@@ -178,7 +178,12 @@ void SnavInterface::GetDSPTimeOffset()
 {
   // get the adsp offset.
   int64_t dsptime;
+#ifdef QC_SOC_TARGET_APQ8096
+  static const char qdspTimerTickPath[] = "/sys/kernel/boot_slpi/qdsp_qtimer";
+#endif
+#ifdef QC_SOC_TARGET_APQ8074
   static const char qdspTimerTickPath[] = "/sys/kernel/boot_adsp/qdsp_qtimer";
+#endif
   char qdspTicksStr[20] = "";
 
   static const double clockFreq = 1 / 19.2;
