@@ -1,0 +1,3 @@
+[submodule "snav_fci"]
+	path = snav_fci
+	url = https://github.com/ATLFlight/snav_fci.git

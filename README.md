@@ -1,30 +1,31 @@
-# Snapdragon Navigator<sup>TM</sup> Flight Controller ROS Example
+# Qualcomm Navigator<sup>TM</sup> Flight Controller ROS Example
 
-Snapdragon Navigator<sup>TM</sup> is a flight controller that runs on
-the Qualcomm Snapdragon Flight<sup>TM</sup> platform. Detailed information
+Qualcomm Navigator<sup>TM</sup> is a flight controller that runs on
+the Qualcomm Flight<sup>TM</sup> platform. Detailed information
 about its capabilities can be found on the [Qualcomm Developer Network
 site](https://developer.qualcomm.com/hardware/snapdragon-flight/sd-navigator).
 
 This ROS-based example demonstrates how to interact with the flight controller
-using the Snapdragon Navigator<sup>TM</sup> API. The flight stack uses the [Machine Vision SDK's](https://developer.qualcomm.com/hardware/snapdragon-flight/machine-vision-sdk) VISLAM
+using the Qualcomm Navigator<sup>TM</sup> API. The flight stack uses the [Machine Vision SDK's](https://developer.qualcomm.com/hardware/snapdragon-flight/machine-vision-sdk) VISLAM
 feature to estimate the 6DOF pose, enabling accurate indoor localization of the
 drone. The 6DOF pose estimate and other useful data are published by this node.
 
-This example assumes that you have a flyable Snapdragon-based drone (with
-RC/WiFi controller, ESC's, propellers, and Snapdragon Flight board) and are
+This example assumes that you have a flyable Qualcomm-based drone (with
+RC/WiFi controller, ESC's, propellers, and Qualcomm Flight board) and are
 comfortable flying a drone.
 
 ## Version Compatibility
 
 The SNAV parameters in this repository are intended for particular versions of SNAV.
 
-This README is for snav_ros version 1.1.0, compatible with SNAV 1.2.38.1.
+This README is for snav_ros version 2.0, compatible with Qualcomm Navigator v1.2.58.
 For previous versions, please see the table below
 
-| SNAV <br>Version        | snav_vehicles <br>Version  |
+| SNAV <br>Version        | snav_ros <br>Version  |
 | ------------- | -----:|
-| 1.2.31        | [1.0.0](https://github.com/ATLFlight/snav_ros/tree/v1.0.0) |
+| 1.2.58        | [2.0](https://github.com/ATLFlight/snav_ros/tree/2.0) |
 | 1.2.38.1      | [1.1.1](https://github.com/ATLFlight/snav_ros/tree/1.1.1) |
+| 1.2.31        | [1.0.0](https://github.com/ATLFlight/snav_ros/tree/v1.0.0) |
 
 Note that you must also recompile snav_ros when installing a new version of SNAV.
 
@@ -48,21 +49,21 @@ Note that you must also recompile snav_ros when installing a new version of SNAV
 ### Hardware
 This example requires the following hardware:
 
-* [Qualcomm Snapdragon Flight Kit](https://shop.intrinsyc.com/collections/product-development-kits/products/qualcomm-snapdragon-flight-sbc)
+* [Qualcomm Flight Kit](https://shop.intrinsyc.com/collections/product-development-kits/products/qualcomm-snapdragon-flight-sbc)
 * [Qualcomm Electronic Speed Control (ESC) board](https://shop.intrinsyc.com/collections/dragonboard-accessories/products/qualcomm-electronic-speed-control-board)
 * Drone Frame, Motors, and Props; such as the [Dragon Drone Development Kit](https://worldsway.com/product/dragon-drone-development-kit/)
 
-Note that if you're using the Dragon DDK, a URDF ros package is available at: [dragon_ddk_description](https://github.com/ATLFlight/dragon_ddk_description)
+Note that if you're using the Dragon DDK, a URDF ros package is available at: [qflight_descriptions](https://github.com/ATLFlight/qflight_descriptions)
 
 ### Software
 To run the example, the following are needed:
 
 * [Plaform Image from Intrynsic 3.1.3.1](https://support.intrinsyc.com/attachments/download/1597/Flight_3.1.3.1_JFlash.zip)
 * [Platform Addon from Intrynsic 3.1.3.1](https://support.intrinsyc.com/attachments/download/1571/Flight_3.1.3.1_qcom_flight_controller_hexagon_sdk_add_on.zip)
-* [Qualcomm Snapdragon Navigator Flight Controller SDK 1.2.38.1](https://developer.qualcomm.com/download/snapdragon-flight/navigator-v1.2.38.deb)
-* [Qualcomm Machine Vision SDK 1.0.2](https://developer.qualcomm.com/download/machine-vision/machine-vision-sdk-v1.0.2.deb)
+* [Qualcomm Navigator Flight Controller SDK 1.2.58](https://developer.qualcomm.com/download/snapdragon-flight/navigator-controller-v1.2.58)
+* [Qualcomm Machine Vision SDK 1.1.8](https://developer.qualcomm.com/download/machine-vision/machine-vision-sdk-v1.1.8.deb)
 * [ROS on target](https://github.com/ATLFlight/ATLFlightDocs/blob/master/SnapdragonROSInstallation.md)
-* [Qualcomm Snapdragon ESC Firmware 1.2.0](https://developer.qualcomm.com/download/snapdragon-flight/navigator-controller-esc-firmware-v1.2.0)
+* [Qualcomm ESC Firmware 1.2.0](https://developer.qualcomm.com/download/snapdragon-flight/navigator-controller-esc-firmware-v1.2.0)
 
 
 ## Clone and build example code
@@ -91,6 +92,8 @@ source /home/linaro/.bashrc
 roscd
 cd ../src
 git clone https://github.com/ATLFlight/snav_ros.git
+cd snav_ros
+git submodule update --init
 ```
 
 ### Install ROS dependencies
@@ -127,7 +130,7 @@ catkin_make
 ```
 
 This will compile the executable `snav_interface_node`.  This node uses the
-Snapdragon Navigator<sup>TM</sup> API and therefore needs to be run as root.  It is best if the linaro user
+Qualcomm Navigator<sup>TM</sup> API and therefore needs to be run as root.  It is best if the linaro user
 can run this with root permissions, as this enables use of roslaunch.
 CMakelists.txt contains a custom command to run when building that sets the UID
 bit on the node.  This allows it to run with root permission from any user.  As
@@ -150,7 +153,7 @@ Take a look at the [launch file](launch/snav_ros.launch) to see what params are 
 
 ## Verification
 
-Data from Snapdragon Navigator<sup>TM</sup> such as the 6DOF pose can be viewed on a host machine running ROS.
+Data from Qualcomm Navigator<sup>TM</sup> such as the 6DOF pose can be viewed on a host machine running ROS.
 
 On your workstation, assuming you have installed ROS, set up you environment variable to point to your target.  These values assume you are in softap mode and your target has IP=192.168.1.1
 ```bash
@@ -198,7 +201,7 @@ Now set the fixed_frame to "/vio/odom" and add a TF display type. Now watch the 
 
 ### Why isn't snav_ros publishing anything?
 
-Snapdragon Navigator<sup>TM</sup> must be running before `snav_ros` is launched. If you see the following
+Qualcomm Navigator<sup>TM</sup> must be running before `snav_ros` is launched. If you see the following
 error messages:
 
 ```
@@ -206,8 +209,8 @@ Update checksum_failure. [f0eb75d8,0e5675fe] Possible RPC issue.
 [ WARN] [8780.150406550]: sn_update_data failed, not publishing
 ```
 
-there is a good chance that Snapdragon Navigator<sup>TM</sup> is not running. Kill `snav_ros` and start
-Snapdragon Navigator<sup>TM</sup> with the following command:
+there is a good chance that Qualcomm Navigator<sup>TM</sup> is not running. Kill `snav_ros` and start
+Qualcomm Navigator<sup>TM</sup> with the following command:
 
 ```bash
 sudo start snav

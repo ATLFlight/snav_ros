@@ -29,13 +29,13 @@
 #  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 #  * POSSIBILITY OF SUCH DAMAGE.
 #  *
-#  * In addition Supplemental Terms apply.  See the SUPPLEMENTAL file. 
+#  * In addition Supplemental Terms apply.  See the SUPPLEMENTAL file.
 #  ****************************************************************************/
 
 cmake_minimum_required(VERSION 2.8.3)
 project(snav_ros)
 
-find_package(catkin REQUIRED
+find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   geometry_msgs
   std_msgs
@@ -44,6 +44,8 @@ find_package(catkin REQUIRED
   tf2
   tf2_ros
   tf2_geometry_msgs
+  snav_msgs
+  dynamic_reconfigure
 )
 
 if ("${QC_SOC_TARGET}" STREQUAL "APQ8096")
@@ -58,9 +60,11 @@ endif()
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
 
+generate_dynamic_reconfigure_options(cfg/SnavRos.cfg)
+
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS geometry_msgs rosgraph_msgs roscpp tf2 tf2_ros tf2_geometry_msgs
+  CATKIN_DEPENDS geometry_msgs rosgraph_msgs roscpp tf2 tf2_ros tf2_geometry_msgs snav_msgs
   DEPENDS system_lib
 )
 
@@ -71,24 +75,40 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
- ${catkin_INCLUDE_DIRS}
   include
+  ${catkin_INCLUDE_DIRS}
   snav
+  snav_fci
+  /usr/include/eigen3
 )
 
-set(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
+
+add_library(snav_fci SHARED snav_fci/imp/src/flight_control_interface.cpp
+  snav_fci/imp/src/planner.cpp
+  snav_fci/imp/src/waypoint.cpp
+)
+
+target_link_libraries(snav_fci snav_arm snav_traj_gen)
 
 add_library(snav_interface
   src/snav_interface.cpp)
+add_dependencies(snav_interface
+  ${catkin_EXPORTED_TARGETS})
+add_dependencies(snav_interface
+  ${PROJECT_NAME}_gencfg)
 
 ## Declare a C++ executable
-add_executable(snav_interface_node 
+add_executable(snav_interface_node
   src/snav_interface_node.cpp)
+add_dependencies(snav_interface_node
+  ${PROJECT_NAME}_gencfg)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(snav_interface
    ${catkin_LIBRARIES}
    snav_arm
+   snav_fci
 )
 
 target_link_libraries(snav_interface_node
